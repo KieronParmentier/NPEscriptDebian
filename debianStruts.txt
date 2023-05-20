@@ -13,25 +13,28 @@ tar xvzf apache-tomcat-9.0.0.M26.tar.gz
 sudo mkdir /usr/local/tomcat
 sudo mv apache-tomcat-9.0.0.M26/* /usr/local/tomcat
 
+wget https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.deb
+sudo apt install ./jdk-20_linux-x64_bin.deb
+
 cd
-echo 'export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_171' >> .bashrc
+echo 'export JAVA_HOME=/usr/lib/jvm/jdk-20' >> .bashrc
 source .bashrc
 
 sudo apt update
 sudo apt install unzip
 
 cd
-wget http://archive.apache.org/dist/struts/2.5.10/struts-2.5.10-all.zip
-unzip struts-2.5.10-all.zip
-mv struts-2.5.10 struts2
+wget http://archive.apache.org/dist/struts/2.3.20.1/struts-2.3.20.1-all.zip
+unzip struts-2.3.20.1-all.zip
+mv struts-2.3.20.1 struts2
 
 sudo apt-get update -y
 sudo apt-get install default-jdk -y
 java -version
 
-wget https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
-tar -xvzf apache-maven-3.8.4-bin.tar.gz
-mv apache-maven-3.8.4 /opt/maven
+wget https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+tar -xvzf apache-maven-3.8.8-bin.tar.gz
+mv apache-maven-3.8.8 /opt/maven
 
 echo 'export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64'  >> /etc/profile.d/maven.sh
 echo 'export M2_HOME=/opt/maven' >> /etc/profile.d/maven.sh
@@ -49,7 +52,7 @@ java -cp target/testapp-1.0-SNAPSHOT.jar com.example.app.App
 cd
 mvn archetype:generate -DgroupId=com.tutorialforlinux-DartifactId=myWebApp-DarchetypeArtifactId=maven-archetype-webapp
 cd myWebApp
-sed '/</project>/<dependency><groupId>org.apache.struts</groupId><artifactId>struts2-core</artifactId><version>2.5.10</version></dependency><build><finalName>basic_struts</finalName></build></project>' /myWebApp/pom.xml
+sed '/</project>/<dependency><groupId>org.apache.struts</groupId><artifactId>struts2-core</artifactId><version>2.3.20.1</version></dependency><build><finalName>basic_struts</finalName></build></project>' /myWebApp/pom.xml
 
 cd
 echo 'export CATALINA_HOME=/usr/local/tomcat' >> .bashrc
@@ -63,5 +66,5 @@ docBase="${catalina.home}/webapps/manager">
 <Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
 </Context>' >> /usr/local/tomcat/webapps/manager/META-INF/context.xml
 
-sudo /usr/local/tomcat/bin/shutdown.sh
-sudo /usr/local/tomcat/bin/startup.sh
+bash /usr/local/tomcat/bin/shutdown.sh
+bash/usr/local/tomcat/bin/startup.sh
