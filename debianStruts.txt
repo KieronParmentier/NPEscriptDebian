@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# NPE vms automatisatie -- Ontwerp en automatisatie van een virtuele omgeving bestaande uit een debian 11 bullseye vm en een Kali Linux 2022.3 (All Tools) vm
+#
+# Author: Karim De Munck
+
+set -o errexit  # abort on nonzero exitstatus
+set -o nounset  # abort on unbound variable
+set -o pipefail # don't hide some errors in pipes
+
+wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.0.M26/bin/apache-tomcat-9.0.0.M26.tar.gz
+tar xvzf apache-tomcat-9.0.0.M26.tar.gz
+sudo mkdir /usr/local/tomcat
+sudo mv apache-tomcat-9.0.0.M26/* /usr/local/tomcat
+
+cd
+echo 'export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_171' >> .bashrc
+source .bashrc
+
+sudo apt update
+sudo apt install unzip
+
+cd
+wget http://archive.apache.org/dist/struts/2.5.10/struts-2.5.10-all.zip
+unzip struts-2.5.10-all.zip
+mv struts-2.5.10 struts2
+
+sudo apt-get update -y
+sudo apt-get install default-jdk -y
+java -version
+
+wget https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
+tar -xvzf apache-maven-3.8.4-bin.tar.gz
+mv apache-maven-3.8.4 /opt/maven
+
+echo 'export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64'  >> /etc/profile.d/maven.sh
+echo 'export M2_HOME=/opt/maven' >> /etc/profile.d/maven.sh
+echo 'export PATH=${M2_HOME}/bin:${PATH}' >> /etc/profile.d/maven.sh
+
+source /etc/profile.d/maven.sh
+
+mvn -version
+
+mvn archetype:generate -DgroupId=com.example.app -DartifactId=testapp -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.4 -DinteractiveMode=false
+cd testapp
+mvn package
+java -cp target/testapp-1.0-SNAPSHOT.jar com.example.app.App
+
+cd
+mvn archetype:generate -DgroupId=com.tutorialforlinux-DartifactId=myWebApp-DarchetypeArtifactId=maven-archetype-webapp
+cd myWebApp
+sed '/</project>/<dependency><groupId>org.apache.struts</groupId><artifactId>struts2-core</artifactId><version>2.5.10</version></dependency><build><finalName>basic_struts</finalName></build></project>' /myWebApp/pom.xml
+
+cd
+echo 'export CATALINA_HOME=/usr/local/tomcat' >> .bashrc
+source .bashrc
+
+cd /usr/local/tomcat/conf
+sed '/</tomcat-users>/<role rolename="manager-gui" /><user username="admin" password="admin" roles="manager-gui"/></tomcat-users>' /usr/local/tomcat/conf/tomcat-users.xml
+
+echo '<Context privileged="true" antiResourceLocking="false"
+docBase="${catalina.home}/webapps/manager">
+<Valve className="org.apache.catalina.valves.RemoteAddrValve" allow="^.*$" />
+</Context>' >> /usr/local/tomcat/webapps/manager/META-INF/context.xml
+
+sudo /usr/local/tomcat/bin/shutdown.sh
+sudo /usr/local/tomcat/bin/startup.sh
