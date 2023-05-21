@@ -26,7 +26,7 @@ sudo apt install unzip
 cd
 wget http://archive.apache.org/dist/struts/2.3.20.1/struts-2.3.20.1-all.zip
 unzip struts-2.3.20.1-all.zip
-mv struts-2.3.20.1 struts2
+sudo mv struts-2.3.20.1 struts2
 
 sudo apt-get update -y
 sudo apt-get install default-jdk -y
@@ -34,7 +34,7 @@ java -version
 
 wget https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
 tar -xvzf apache-maven-3.8.8-bin.tar.gz
-mv apache-maven-3.8.8 /opt/maven
+sudo mv apache-maven-3.8.8 /opt/maven
 
 echo 'export JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64'  >> /etc/profile.d/maven.sh
 echo 'export M2_HOME=/opt/maven' >> /etc/profile.d/maven.sh
@@ -52,14 +52,14 @@ java -cp target/testapp-1.0-SNAPSHOT.jar com.example.app.App
 cd
 mvn archetype:generate -DgroupId=com.tutorialforlinux-DartifactId=myWebApp-DarchetypeArtifactId=maven-archetype-webapp
 cd myWebApp
-sed '/</project>/<dependency><groupId>org.apache.struts</groupId><artifactId>struts2-core</artifactId><version>2.3.20.1</version></dependency><build><finalName>basic_struts</finalName></build></project>' /myWebApp/pom.xml
+sed -i 's|</project>|<dependency><groupId>org.apache.struts</groupId><artifactId>struts2-core</artifactId><version>2.3.20.1</version></dependency><build><finalName>basic_struts</finalName></build></project>|g' pom.xml
 
 cd
 echo 'export CATALINA_HOME=/usr/local/tomcat' >> .bashrc
 source .bashrc
 
 cd /usr/local/tomcat/conf
-sed '/</tomcat-users>/<role rolename="manager-gui" /><user username="admin" password="admin" roles="manager-gui"/></tomcat-users>' /usr/local/tomcat/conf/tomcat-users.xml
+sed -i 's|</tomcat-users>|<role rolename="manager-gui" /><user username="admin" password="admin" roles="manager-gui"/></tomcat-users>|g' tomcat-users.xml
 
 echo '<Context privileged="true" antiResourceLocking="false"
 docBase="${catalina.home}/webapps/manager">
@@ -67,4 +67,4 @@ docBase="${catalina.home}/webapps/manager">
 </Context>' >> /usr/local/tomcat/webapps/manager/META-INF/context.xml
 
 bash /usr/local/tomcat/bin/shutdown.sh
-bash/usr/local/tomcat/bin/startup.sh
+bash /usr/local/tomcat/bin/startup.sh
