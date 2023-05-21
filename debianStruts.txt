@@ -16,14 +16,14 @@ sudo mv apache-tomcat-9.0.0.M26/* /usr/local/tomcat
 wget https://download.oracle.com/java/20/latest/jdk-20_linux-x64_bin.deb
 sudo apt install ./jdk-20_linux-x64_bin.deb
 
-cd
+cd /
 echo 'export JAVA_HOME=/usr/lib/jvm/jdk-20' >> .bashrc
 source .bashrc
 
 sudo apt update
 sudo apt install unzip
 
-cd
+cd /
 wget http://archive.apache.org/dist/struts/2.3.20.1/struts-2.3.20.1-all.zip
 unzip struts-2.3.20.1-all.zip
 sudo mv struts-2.3.20.1 struts2
@@ -49,12 +49,12 @@ cd testapp
 mvn package
 java -cp target/testapp-1.0-SNAPSHOT.jar com.example.app.App
 
-cd
-mvn archetype:generate -DgroupId=com.tutorialforlinux-DartifactId=myWebApp-DarchetypeArtifactId=maven-archetype-webapp
+cd /
+mvn archetype:generate -DgroupId=com.tutorialforlinux -DartifactId=myWebApp
 cd myWebApp
 sed -i 's|</project>|<dependency><groupId>org.apache.struts</groupId><artifactId>struts2-core</artifactId><version>2.3.20.1</version></dependency><build><finalName>basic_struts</finalName></build></project>|g' pom.xml
 
-cd
+cd /
 echo 'export CATALINA_HOME=/usr/local/tomcat' >> .bashrc
 source .bashrc
 
